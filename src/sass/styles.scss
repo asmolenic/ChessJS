@@ -1,9 +1,56 @@
+@use 'pieces';
+
 html {
   font-family: 'Roboto', sans-serif;
   font-size: 10px;
 }
 
-p {
-  font-size: 1.4rem;
-  color: red;
+* {
+  box-sizing: border-box;
 }
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.wrapper {
+  display: flex;
+  align-items: flex-start;
+  width: 100vw;
+  height: 100vh;
+  gap: 2rem;
+  padding: 2rem;
+
+  .board-container {
+    background-color: #f3f3f4;
+    width: min(100vh - 4rem, 100vw - 6rem - 40rem);
+    height: min(100vh - 4rem, 100vw - 6rem - 40rem);
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+
+      .cell {
+        aspect-ratio: 1;
+
+        &.black-cell {
+          background-color: #6a9b41;
+        }
+      }
+    }
+  }
+
+  .side {
+    width: 40rem;
+    margin-left: auto;
+
+    p {
+      font-size: 1.4rem;
+      color: red;
+    }
+  }
+
+  // #f3f3f4 w #6a9b41  b
+}
+
