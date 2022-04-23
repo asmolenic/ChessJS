@@ -38,6 +38,14 @@ body {
           background-color: #6a9b41;
         }
       }
+
+      &.flipped {
+        transform: rotate(180deg);
+
+        & .cell {
+          transform: rotate(180deg);
+        }
+      }
     }
   }
 
