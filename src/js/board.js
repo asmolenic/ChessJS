@@ -1,4 +1,4 @@
-import { qs, createElement } from './utils/dom-utils.js';
+import { qs, qsa, createElement } from './utils/dom-utils.js';
 
 const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
@@ -25,5 +25,22 @@ export const board = {
         board.append(cell);
       });
     })
+  },
+  flipBoard() {
+    const board = qs('.board');
+    if (!board) {
+      return;
+    }
+
+    const cells = qsa('.cell');
+    if (!cells?.length) {
+      return;
+    }
+
+    board.innerHtml = '';
+
+    Array.from(cells)
+      .reverse()
+      .forEach(cell => board.append(cell));
   }
 };

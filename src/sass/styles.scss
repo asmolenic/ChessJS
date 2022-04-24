@@ -24,6 +24,8 @@ body {
 
   .board-container {
     background-color: #f3f3f4;
+    border-radius: 5px;
+    overflow: hidden;
     width: min(100vh - 4rem, 100vw - 6rem - 40rem);
     height: min(100vh - 4rem, 100vw - 6rem - 40rem);
 
@@ -33,17 +35,13 @@ body {
 
       .cell {
         aspect-ratio: 1;
+        padding: .2rem;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100%;
 
         &.black-cell {
           background-color: #6a9b41;
-        }
-      }
-
-      &.flipped {
-        transform: rotate(180deg);
-
-        & .cell {
-          transform: rotate(180deg);
         }
       }
     }
@@ -52,13 +50,5 @@ body {
   .side {
     width: 40rem;
     margin-left: auto;
-
-    p {
-      font-size: 1.4rem;
-      color: red;
-    }
   }
-
-  // #f3f3f4 w #6a9b41  b
 }
-
