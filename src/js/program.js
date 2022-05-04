@@ -17,5 +17,6 @@ addGlobalEventListener(
   "#loadFen",
   () => {
    fen.load();
+   board.renderFenData(fen.data);
   }
 );

@@ -4,9 +4,24 @@
 
 const RANK_SYMBOLS = `pnbrkqPNBRKQ12345678`;
 
-function parseFEN(fen) {
+const pieceMapping = {};
+pieceMapping['p'] = 'bp';
+pieceMapping['n'] = 'bn';
+pieceMapping['b'] = 'bb';
+pieceMapping['r'] = 'br';
+pieceMapping['k'] = 'bk';
+pieceMapping['q'] = 'bq';
+pieceMapping['P'] = 'wp';
+pieceMapping['N'] = 'wn';
+pieceMapping['B'] = 'wb';
+pieceMapping['R'] = 'wr';
+pieceMapping['K'] = 'wk';
+pieceMapping['Q'] = 'wq';
+export const PIECE_MAPPING = pieceMapping;
+
+function parse(fen) {
   if (typeof fen !== 'string') {
-    console.error(`parseFEN requires 'string' input but ${typeof fen} was provided`);
+    console.error(`parseFEN requires 'string' input but ${typeof fen} was provided`, fen);
     return false;
   }
 
@@ -60,7 +75,7 @@ function parseFEN(fen) {
 
 function isRankValid(rank) {
   if (typeof rank !== 'string') {
-    console.error(`isRankValid requires 'string' input but '${typeof rank}' was provided`);
+    console.error(`isRankValid requires 'string' input but '${typeof rank}' was provided`, rank);
     return false;
   }
 
@@ -93,36 +108,22 @@ function isRankValid(rank) {
   return true;
 }
 
-function renderFenRanks(ranks) {
-  if (!Array.isArray(ranks)) {
-    console.error(`renderFenRanks requires 'Array' input but '${typeof ranks}' was provided`)
-    return;
-  }
-
-  ranks.forEach(rank => renderFenRank(rank));
-}
-
-
-function renderFenRank(rank) {
-  if (typeof rank !== 'string') {
-    console.error(`renderFenRank requires 'string' input but '${typeof rank}' was provided`);
-    return false;
-  }
-
-  // add code to render a FEN rank
-}
+let data = undefined;
 
 export const fen = {
   RANK_SYMBOLS,
+  data,
   load() {
-    const fen = parseFEN(prompt(`FEN`));
-    if (fen.error) {
-      alert(fen.error);
+    this.data = undefined;
+
+    const fenData = parse(prompt(`FEN`));
+    if (fenData.error) {
+      alert(fenData.error);
       return;
     }
 
-    renderFenRanks(fen.ranks)
+    this.data = fenData;
 
-    console.table(fen);
+    console.table(this.data);
   },
 };
