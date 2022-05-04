@@ -25,6 +25,7 @@ body {
   .board-container {
     background-color: #f3f3f4;
     border-radius: 5px;
+    border: 0.1rem solid darkgray;
     overflow: hidden;
     width: min(100vh - 4rem, 100vw - 6rem - 40rem);
     height: min(100vh - 4rem, 100vw - 6rem - 40rem);
@@ -50,5 +51,10 @@ body {
   .side {
     width: 40rem;
     margin-left: auto;
+    align-self: stretch;
+    background-color: beige;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 0.1rem solid darkgray;
   }
 }
