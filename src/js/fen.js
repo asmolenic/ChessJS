@@ -73,7 +73,7 @@ function parse(fen) {
     };
   }
 
-  if (activeColor !== 'w' || activeColor !== 'b') {
+  if (activeColor !== 'w' && activeColor !== 'b') {
     return {
       error: `Invalid FEN string provided - incorrect active color - provided '${activeColor}', expected 'w' or 'b'`,
     };
