@@ -15,17 +15,17 @@ export const board = {
 
     ranks.forEach((rank, j) => {
       files.forEach((file, i) => {
-        const cell = createElement('div', {
-          class: 'cell',
+        const square = createElement('div', {
+          class: 'square',
           id: `${file}${rank}`,
           text: `${file}${rank}`
         });
 
         if ((i + j) % 2 === 1) {
-          cell.classList.add('black-cell');
+          square.classList.add('black-square');
         }
 
-        board.append(cell);
+        board.append(square);
       });
     })
   },
@@ -35,16 +35,16 @@ export const board = {
       return;
     }
 
-    const cells = qsa('.cell');
-    if (!cells?.length) {
+    const squares = qsa('.square');
+    if (!squares?.length) {
       return;
     }
 
     board.innerHtml = '';
 
-    Array.from(cells)
+    Array.from(squares)
       .reverse()
-      .forEach(cell => board.append(cell));
+      .forEach(square => board.append(square));
   },
   renderFenData(data) {
     console.log('[renderFenData] rendering ...', data);
@@ -76,23 +76,21 @@ function renderFenRank(rank, index) {
   for (let i = 0; i < rank.length; i++) {
     if (isNaN(rank[i])) {
       // we've encountered a piece so we must render it
-      pos+=1;
+      pos += 1;
 
       const selector = `#${files[pos]}${ranks[index]}`;
-      const cell = qs(selector);
-      if (!cell) {
-        console.error(`[renderFenRank] cell '${selector}' not found`);
+      const square = qs(selector);
+      if (!square) {
+        console.error(`[renderFenRank] square '${selector}' not found`);
         continue;
       }
 
-      const pieceClass = `piece-${PIECE_MAPPING[rank[i]]}`;
-      cell.classList.remove(pieceClass);
-      cell.classList.add(pieceClass);
+      square.dataset.piece = PIECE_MAPPING[rank[i]];
 
       continue;
     }
 
-    // empty cell, simply advance
+    // empty square, simply advance
     pos += +rank[i];
   }
 }

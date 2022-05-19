@@ -34,14 +34,14 @@ body {
       display: grid;
       grid-template-columns: repeat(8, 1fr);
 
-      .cell {
+      .square {
         aspect-ratio: 1;
         padding: .2rem;
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100%;
 
-        &.black-cell {
+        &.black-square {
           background-color: #6a9b41;
         }
       }
