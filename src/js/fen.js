@@ -1,23 +1,23 @@
 // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
 
-// import { board } from './board';
+import * as Pieces from './pieces.js';
 
 const RANK_SYMBOLS = `pnbrkqPNBRKQ12345678`;
 const STARTING_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 const pieceMapping = {};
-pieceMapping['p'] = 'bp';
-pieceMapping['n'] = 'bn';
-pieceMapping['b'] = 'bb';
-pieceMapping['r'] = 'br';
-pieceMapping['k'] = 'bk';
-pieceMapping['q'] = 'bq';
-pieceMapping['P'] = 'wp';
-pieceMapping['N'] = 'wn';
-pieceMapping['B'] = 'wb';
-pieceMapping['R'] = 'wr';
-pieceMapping['K'] = 'wk';
-pieceMapping['Q'] = 'wq';
+pieceMapping['p'] = Pieces.BLACK_PAWN;
+pieceMapping['n'] = Pieces.BLACK_KNIGHT;
+pieceMapping['b'] = Pieces.BLACK_BISHOP;
+pieceMapping['r'] = Pieces.BLACK_ROOK;
+pieceMapping['k'] = Pieces.BLACK_KING;
+pieceMapping['q'] = Pieces.BLACK_QUEEN;
+pieceMapping['P'] = Pieces.WHITE_PAWN;
+pieceMapping['N'] = Pieces.WHITE_KNIGHT;
+pieceMapping['B'] = Pieces.WHITE_BISHOP;
+pieceMapping['R'] = Pieces.WHITE_ROOK;
+pieceMapping['K'] = Pieces.WHITE_KING;
+pieceMapping['Q'] = Pieces.WHITE_QUEEN;
 export const PIECE_MAPPING = pieceMapping;
 
 function parse(fen) {
