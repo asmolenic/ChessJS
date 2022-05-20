@@ -15,7 +15,11 @@ export const addGlobalEventListener = (
 }
 
 export const qs = (selector, parent = document) => {
-  return parent.querySelector(selector)
+  try {
+    return parent.querySelector(selector);
+  } catch (ex) {
+    return undefined;
+  }
 }
 
 export const qsa = (selector, parent = document) => {
