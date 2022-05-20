@@ -40,10 +40,33 @@ body {
         background-repeat: no-repeat;
         background-position: center;
         background-size: 100%;
+        position: relative;
 
         &.black-square {
           background-color: #6a9b41;
         }
+
+        // &::before { // dot for covered empty squares
+        //   content: "";
+        //   position: absolute;
+        //   border-radius: 50%;
+        //   top: 30%;
+        //   left: 30%;
+        //   right: 30%;
+        //   bottom: 30%;
+        //   background-color: rgba(0,0,0,.2);
+        // }
+
+        // &::after { // circle for capturable pieces
+        //   content: "";
+        //   border: 1rem solid rgba(0,0,0,.3);
+        //   position: absolute;
+        //   top: 0.5rem;
+        //   right: 0.5rem;
+        //   bottom: 0.5rem;
+        //   left: 0.5rem;
+        //   border-radius: 50%;
+        // }
       }
     }
   }
