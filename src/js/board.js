@@ -6,7 +6,7 @@ const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const ranks = [8, 7, 6, 5, 4, 3, 2, 1];
 
 export const board = {
-  events: { startMove, spawnPiece },
+  events: { startMove, spawnPiece, deletePiece },
   buildBoard() {
     const board = qs('.board');
     if (!board) {
@@ -186,7 +186,7 @@ function getOffsettedFile(file = ' ', offset = 0) {
 }
 
 function spawnPiece(event) {
-  if (!event.ctrlKey) {
+  if (!(event.ctrlKey && !event.shiftKey && !event.altKey)) {
     return;
   }
 
@@ -212,4 +212,16 @@ function spawnPiece(event) {
   }
 
   event.target.dataset.piece = piece;
+}
+
+function deletePiece(event) {
+  if (!(event.ctrlKey && event.shiftKey)) {
+    return;
+  }
+
+  if (!event.target.classList.contains('square')) {
+    return;
+  }
+
+  event.target.dataset.piece = undefined;
 }

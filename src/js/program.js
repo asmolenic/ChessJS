@@ -38,3 +38,9 @@ addGlobalEventListener(
   ".square",
   board.events.spawnPiece
 );
+
+addGlobalEventListener(
+  "click",
+  ".square",
+  board.events.deletePiece
+);
