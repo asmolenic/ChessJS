@@ -1,4 +1,5 @@
 import { board } from './board.js';
+import { boardEvents } from './board-events.js';
 import { fen } from './fen.js';
 import { addGlobalEventListener } from './utils/dom-utils.js';
 
@@ -36,11 +37,11 @@ addGlobalEventListener(
 addGlobalEventListener(
   "click",
   ".square",
-  board.events.spawnPiece
+  boardEvents.spawnPiece
 );
 
 addGlobalEventListener(
   "click",
   ".square",
-  board.events.deletePiece
+  boardEvents.deletePiece
 );
