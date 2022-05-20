@@ -45,3 +45,9 @@ addGlobalEventListener(
   ".square",
   boardEvents.deletePiece
 );
+
+addGlobalEventListener(
+  "click",
+  ".square[data-piece^=w]",
+  board.events.startMove
+);

@@ -114,10 +114,15 @@ function renderFenRank(rank, index) {
 
 // idea for renaming: intializeTurnForWhite
 function startMove(event) {
-  console.log('available moves', getAvailableMoves(event.target))
+  const candidateMoves = getCandidateMoves(event.target);
+  console.log('candidate moves', candidateMoves);
+
+  candidateMoves.forEach(move => {
+    qs(`#${move.squareId}`)?.classList.add(move.isCapture ? 'candidate-capture' : 'candidate');
+  });
 }
 
-function getAvailableMoves(square) {
+function getCandidateMoves(square) {
   const squareId = square?.getAttribute('id');
   if (!squareId) {
     return [];
@@ -150,14 +155,14 @@ function getWhitePawnMoves(squareId) {
   const firstSquareId = `${file}${rank + 1}`;
   targetSquare = qs(`#${firstSquareId}`);
   if (targetSquare && !targetSquare.dataset.piece) {
-    moves.push(firstSquareId);
+    moves.push({ squareId: firstSquareId, isCapture: false });
 
     if (rank === 2) {
       // for their first move pawns can advance two squares
       const secondSquareId = `${file}${rank + 2}`;
       targetSquare = qs(`#${secondSquareId}`);
       if (targetSquare && !targetSquare.dataset.piece) {
-        moves.push(secondSquareId);
+        moves.push({ squareId: secondSquareId, isCapture: false });
       }
     }
   }
@@ -165,13 +170,13 @@ function getWhitePawnMoves(squareId) {
   const leftCaptureSquare = `${getOffsettedFile(file, -1)}${rank + 1}`;
   targetSquare = qs(`#${leftCaptureSquare}`);
   if (targetSquare && targetSquare.dataset.piece?.charAt(0) === 'b') {
-    moves.push(leftCaptureSquare);
+    moves.push({ squareId: leftCaptureSquare, isCapture: true });
   }
 
   const rightCaptureSquare = `${getOffsettedFile(file, +1)}${rank + 1}`;
   targetSquare = qs(`#${rightCaptureSquare}`);
   if (targetSquare && targetSquare.dataset.piece?.charAt(0) === 'b') {
-    moves.push(rightCaptureSquare);
+    moves.push({ squareId: rightCaptureSquare, isCapture: true });
   }
 
   return moves;
