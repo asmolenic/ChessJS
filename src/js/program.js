@@ -32,3 +32,9 @@ addGlobalEventListener(
     }
   }
 );
+
+addGlobalEventListener(
+  "click",
+  ".square",
+  board.events.spawnPiece
+);

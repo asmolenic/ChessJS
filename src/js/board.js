@@ -6,7 +6,7 @@ const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const ranks = [8, 7, 6, 5, 4, 3, 2, 1];
 
 export const board = {
-  events: [startMove],
+  events: { startMove, spawnPiece },
   buildBoard() {
     const board = qs('.board');
     if (!board) {
@@ -112,6 +112,7 @@ function renderFenRank(rank, index) {
 //   return ranks.includes(+squareId.charAt(1));
 // }
 
+// idea for renaming: intializeTurnForWhite
 function startMove(event) {
   console.log('available moves', getAvailableMoves(event.target))
 }
@@ -182,4 +183,33 @@ function getOffsettedFile(file = ' ', offset = 0) {
   }
 
   return String.fromCharCode(file.charCodeAt(0) + offset);
+}
+
+function spawnPiece(event) {
+  if (!event.ctrlKey) {
+    return;
+  }
+
+  if (!event.target.classList.contains('square')) {
+    return;
+  }
+
+  let piece = window.prompt(`What piece must be spawned?
+  bp -> black pawn . . . . . . wp -> white pawn
+  bn -> black knight . . . . . wn -> white knight
+  bb -> black bishop . . . . .wb -> white bishop
+  br -> black rook . . . . . . . wr -> white rook
+  bk -> black king . . . . . . . wk -> white king
+  bq -> black queen . . . . . wq -> white queen`);
+  if (!piece) {
+    return;
+  }
+
+  piece = piece.trim();
+
+  if (!Pieces.PIECES_LIST.includes(piece)) {
+    return;
+  }
+
+  event.target.dataset.piece = piece;
 }
