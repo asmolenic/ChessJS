@@ -39,6 +39,6 @@ export const boardEvents = {
       return;
     }
 
-    event.target.dataset.piece = undefined;
+    delete event.target.dataset.piece;
   }
 }
