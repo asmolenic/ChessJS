@@ -6,7 +6,7 @@ const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const ranks = [8, 7, 6, 5, 4, 3, 2, 1];
 
 export const board = {
-  events: { startMove },
+  events: { startMove, cancelMove },
   buildBoard() {
     const board = qs('.board');
     if (!board) {
@@ -114,12 +114,18 @@ function renderFenRank(rank, index) {
 
 // idea for renaming: intializeTurnForWhite
 function startMove(event) {
+  event.stopImmediatePropagation();
+
   const candidateMoves = getCandidateMoves(event.target);
   console.log('candidate moves', candidateMoves);
 
-  candidateMoves.forEach(move => {
-    qs(`#${move.squareId}`)?.classList.add(move.isCapture ? 'candidate-capture' : 'candidate');
-  });
+  // store candidate moves so we can clear them when completing the move
+  event.target.dataset.candidates = JSON.stringify(candidateMoves);
+
+  // mark the square/piece as selected
+  event.target.classList.add('selected');
+
+  spotlightCanditateMoves(candidateMoves);
 }
 
 function getCandidateMoves(square) {
@@ -188,4 +194,20 @@ function getOffsettedFile(file = ' ', offset = 0) {
   }
 
   return String.fromCharCode(file.charCodeAt(0) + offset);
+}
+
+function spotlightCanditateMoves(moves) {
+  moves.forEach(move => {
+    qs(`#${move.squareId}`)?.classList.add(move.isCapture ? 'candidate-capture' : 'candidate');
+  });
+}
+
+function cancelMove(event) {
+  event.target.classList.remove('selected');
+  const canditates = JSON.parse(event.target.dataset.candidates);
+  canditates.forEach(candidate => {
+    qs(`#${candidate.squareId}`)?.classList?.remove(candidate.isCapture ? 'candidate-capture' : 'candidate')
+  });
+
+  delete event.target.dataset.candidates;
 }
