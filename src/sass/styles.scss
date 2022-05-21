@@ -44,6 +44,10 @@ body {
 
         &.black-square {
           background-color: #6a9b41;
+
+          &.selected {
+            background-color: #b6df3d;
+          }
         }
 
         &.candidate {
@@ -75,17 +79,7 @@ body {
         }
 
         &.selected {
-          &::before {
-            // selected piece
-            content: "";
-            position: absolute;
-            border-radius: 0;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 0, .3);
-          }
+          background-color: #f3f362;
         }
       }
 
