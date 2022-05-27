@@ -1,4 +1,4 @@
-import * as Pieces from './pieces.js';
+import { Pieces } from './pieces.js';
 
 export const boardEvents = {
   spawnPiece(event) {
@@ -23,7 +23,7 @@ export const boardEvents = {
 
     piece = piece.trim();
 
-    if (!Pieces.PIECES_LIST.includes(piece)) {
+    if (!Pieces.LIST.includes(piece)) {
       return;
     }
 

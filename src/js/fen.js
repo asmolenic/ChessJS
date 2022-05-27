@@ -1,6 +1,6 @@
 // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
 
-import * as Pieces from './pieces.js';
+import { Pieces } from './pieces.js';
 
 const RANK_SYMBOLS = `pnbrkqPNBRKQ12345678`;
 const STARTING_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
