@@ -1,5 +1,5 @@
 import { qs, qsa, createElement } from './utils/dom-utils.js';
-import * as Pieces from './pieces.js';
+import { Pieces } from './pieces.js';
 
 const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const ranks = [8, 7, 6, 5, 4, 3, 2, 1];
@@ -62,13 +62,11 @@ export const board = {
       .reverse()
       .forEach(square => board.append(square));
   },
-  
+
 
 };
 
 window.board = board;
-
-
 
 // idea for renaming: intializeTurnForWhite
 function startMove(event) {
@@ -87,14 +85,16 @@ function startMove(event) {
 }
 
 function getCandidateMoves(square) {
+  // const label = `getCandidateMoves(...)`;
+  // console.log(`${label} square`, square);
+
   const squareId = square?.getAttribute('id');
   if (!squareId) {
     return [];
   }
 
-  console.log('yoo', square === board.boardData[squareId].element);
-
   const piece = square?.dataset.piece;
+  // console.log(`${label} piece`, piece);
 
   switch (piece) {
     case Pieces.WHITE_PAWN:
@@ -105,6 +105,7 @@ function getCandidateMoves(square) {
 }
 
 function getWhitePawnMoves(squareId) {
+  // console.log(`getWhitePawnMoves(squareId=${squareId})`);
   let file = squareId.charAt(0);
   const rank = +squareId.charAt(1);
 
