@@ -5,7 +5,7 @@ import { addGlobalEventListener } from './utils/dom-utils.js';
 
 board.buildBoard();
 fen.load(fen.STARTING_POSITION);
-board.renderFenData(fen.data);
+fen.renderFenData(board, fen.data);
 
 addGlobalEventListener(
   "click",
@@ -20,7 +20,7 @@ addGlobalEventListener(
   "#loadFen",
   () => {
     fen.load();
-    board.renderFenData(fen.data);
+    fen.renderFenData(board, fen.data);
   }
 );
 

@@ -140,4 +140,52 @@ export const fen = {
 
     console.table(this.data);
   },
+  renderFenData(board, fenData) {
+    console.log('[renderFenData] rendering ...', fenData);
+    if (!fenData) {
+      return;
+    }
+
+    renderFenRanks(board, fenData?.ranks);
+    board.boardData.activeColor = fenData.activeColor;
+  },
 };
+
+function renderFenRanks(board, ranks) {
+  if (!Array.isArray(ranks)) {
+    console.error(`[renderFenRanks] ranks expected as 'Array' but it is a '${typeof ranks}'`, ranks);
+    return;
+  }
+
+  ranks.forEach((rank, index) => renderFenRank(board, rank, index));
+}
+
+
+function renderFenRank(board, rank, index) {
+  if (typeof rank !== 'string') {
+    console.error(`[renderFenRank] rank expected as 'string' but it is a '${typeof rank}'`, rank);
+    return;
+  }
+
+  let pos = -1;
+  for (let i = 0; i < rank.length; i++) {
+    if (isNaN(rank[i])) {
+      // we've encountered a piece so we must render it
+      pos += 1;
+
+      const squareKey = `${board.files[pos]}${board.ranks[index]}`;
+      const square = board?.boardData?.squares[squareKey].element;
+      if (!square) {
+        console.error(`[renderFenRank] square '${squareKey}' not found`);
+        continue;
+      }
+
+      square.dataset.piece = PIECE_MAPPING[rank[i]];
+
+      continue;
+    }
+
+    // empty square, simply advance
+    pos += +rank[i];
+  }
+}

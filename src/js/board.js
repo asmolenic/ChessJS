@@ -1,5 +1,4 @@
 import { qs, qsa, createElement } from './utils/dom-utils.js';
-import { PIECE_MAPPING } from './fen.js';
 import * as Pieces from './pieces.js';
 
 const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -7,6 +6,9 @@ const ranks = [8, 7, 6, 5, 4, 3, 2, 1];
 
 export const board = {
   events: { startMove, cancelMove },
+  boardData: { squares: {} },
+  files,
+  ranks,
   buildBoard() {
     const board = qs('.board');
     if (!board) {
@@ -14,18 +16,30 @@ export const board = {
     }
 
     board.innerHtml = '';
+    this.boardData = { squares: {} };
 
-    ranks.forEach((rank, j) => {
-      files.forEach((file, i) => {
+    this.ranks.forEach((rank, j) => {
+      this.files.forEach((file, i) => {
+        const id = `${file}${rank}`;
+
         const square = createElement('div', {
           class: 'square',
-          id: `${file}${rank}`,
-          text: `${file}${rank}`
+          id,
+          text: id
         });
 
         if ((i + j) % 2 === 1) {
           square.classList.add('black-square');
         }
+
+        square.dataset.file = i;
+        square.dataset.rank = j;
+
+        let squareData = {
+          element: square
+        }
+
+        this.boardData.squares[id] = this.boardData.squares[`${i + 1}${j + 1}`] = squareData;
 
         board.append(square);
       });
@@ -48,69 +62,13 @@ export const board = {
       .reverse()
       .forEach(square => board.append(square));
   },
-  renderFenData(data) {
-    console.log('[renderFenData] rendering ...', data);
-    if (!data) {
-      return;
-    }
-
-    renderFenRanks(data?.ranks);
-  },
+  
 
 };
 
 window.board = board;
 
-function renderFenRanks(ranks) {
-  if (!Array.isArray(ranks)) {
-    console.error(`[renderFenRanks] ranks expected as 'Array' but it is a '${typeof ranks}'`, ranks);
-    return;
-  }
 
-  ranks.forEach((rank, index) => renderFenRank(rank, index));
-}
-
-
-function renderFenRank(rank, index) {
-  if (typeof rank !== 'string') {
-    console.error(`[renderFenRank] rank expected as 'string' but it is a '${typeof rank}'`, rank);
-    return;
-  }
-
-  let pos = -1;
-  for (let i = 0; i < rank.length; i++) {
-    if (isNaN(rank[i])) {
-      // we've encountered a piece so we must render it
-      pos += 1;
-
-      const selector = `#${files[pos]}${ranks[index]}`;
-      const square = qs(selector);
-      if (!square) {
-        console.error(`[renderFenRank] square '${selector}' not found`);
-        continue;
-      }
-
-      square.dataset.piece = PIECE_MAPPING[rank[i]];
-
-      continue;
-    }
-
-    // empty square, simply advance
-    pos += +rank[i];
-  }
-}
-
-// function isSquareIdValid(squareId) {
-//   if (typeof squareId !== 'string' || squareId.length !== 2) {
-//     return false;
-//   }
-
-//   if (!files.includes(squareId.charAt(0))) {
-//     return false;
-//   }
-
-//   return ranks.includes(+squareId.charAt(1));
-// }
 
 // idea for renaming: intializeTurnForWhite
 function startMove(event) {
@@ -133,6 +91,8 @@ function getCandidateMoves(square) {
   if (!squareId) {
     return [];
   }
+
+  console.log('yoo', square === board.boardData[squareId].element);
 
   const piece = square?.dataset.piece;
 
