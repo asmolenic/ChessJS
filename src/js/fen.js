@@ -20,6 +20,8 @@ pieceMapping['K'] = Pieces.WHITE_KING;
 pieceMapping['Q'] = Pieces.WHITE_QUEEN;
 export const PIECE_MAPPING = pieceMapping;
 
+const CASTLING_VALUES = ['-', 'K', 'Q', 'KQ', 'Kk', 'Kq', 'Kkq', 'Qk', 'Qq', 'Qkq', 'KQk', 'KQq', 'KQkq', 'k', 'q', 'kq'];
+
 function parse(fen) {
   console.log('Parsing FEN:', fen);
 
@@ -79,7 +81,13 @@ function parse(fen) {
     };
   }
 
-  return { ranks, activeColor };
+  if (!CASTLING_VALUES.includes(castlingAvailability)) {
+    return {
+      error: `Invalid FEN string provided - incorrect castling availability - provided '${castlingAvailability}', expected one of [${CASTLING_VALUES.join(', ')}]`,
+    };
+  }
+
+  return { ranks, activeColor, castlingAvailability };
 }
 
 function isRankValid(rank) {
