@@ -1,6 +1,7 @@
 // https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
 
 import { Pieces } from './pieces.js';
+import { files, ranks } from './config.js';
 
 const RANK_SYMBOLS = `pnbrkqPNBRKQ12345678`;
 const STARTING_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -173,7 +174,7 @@ function renderFenRank(board, rank, index) {
       // we've encountered a piece so we must render it
       pos += 1;
 
-      const squareKey = `${board.files[pos]}${board.ranks[index]}`;
+      const squareKey = `${files[pos]}${ranks[index]}`;
       const square = board?.boardData?.squares[squareKey].element;
       if (!square) {
         console.error(`[renderFenRank] square '${squareKey}' not found`);

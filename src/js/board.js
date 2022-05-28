@@ -1,14 +1,10 @@
 import { qs, qsa, createElement } from './utils/dom-utils.js';
 import { Pieces } from './pieces.js';
-
-const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-const ranks = [8, 7, 6, 5, 4, 3, 2, 1];
+import { files, ranks } from './config.js';
 
 export const board = {
   events: { startMove, cancelMove },
   boardData: { squares: {} },
-  files,
-  ranks,
   buildBoard() {
     const board = qs('.board');
     if (!board) {
@@ -18,8 +14,8 @@ export const board = {
     board.innerHtml = '';
     this.boardData = { squares: {} };
 
-    this.ranks.forEach((rank, j) => {
-      this.files.forEach((file, i) => {
+    ranks.forEach((rank, j) => {
+      files.forEach((file, i) => {
         const id = `${file}${rank}`;
 
         const square = createElement('div', {

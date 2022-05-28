@@ -31,9 +31,9 @@ export const Pieces = {
   WHITE_KING,
   WHITE_QUEEN,
   LIST: PIECES_LIST,
-  evaluateCanditateMoves: (boardData, squareId) => {
-    // should return [] if it is not that player's turn
-    // should return [] if squareId points to a piece other than the selected one
-    // should store candidates inside boardData
-  }
+  // evaluateCanditateMoves: (boardData, squareId) => {
+  //   // should return [] if it is not that player's turn
+  //   // should return [] if squareId points to a piece other than the selected one
+  //   // should store candidates inside boardData
+  // }
 };
