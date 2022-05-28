@@ -6,20 +6,20 @@ import { files, ranks } from './config.js';
 const RANK_SYMBOLS = `pnbrkqPNBRKQ12345678`;
 const STARTING_POSITION = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
-const pieceMapping = {};
-pieceMapping['p'] = Pieces.BLACK_PAWN;
-pieceMapping['n'] = Pieces.BLACK_KNIGHT;
-pieceMapping['b'] = Pieces.BLACK_BISHOP;
-pieceMapping['r'] = Pieces.BLACK_ROOK;
-pieceMapping['k'] = Pieces.BLACK_KING;
-pieceMapping['q'] = Pieces.BLACK_QUEEN;
-pieceMapping['P'] = Pieces.WHITE_PAWN;
-pieceMapping['N'] = Pieces.WHITE_KNIGHT;
-pieceMapping['B'] = Pieces.WHITE_BISHOP;
-pieceMapping['R'] = Pieces.WHITE_ROOK;
-pieceMapping['K'] = Pieces.WHITE_KING;
-pieceMapping['Q'] = Pieces.WHITE_QUEEN;
-export const PIECE_MAPPING = pieceMapping;
+export const PIECE_MAPPING = {
+  ['p']: Pieces.BLACK_PAWN,
+  ['n']: Pieces.BLACK_KNIGHT,
+  ['b']: Pieces.BLACK_BISHOP,
+  ['r']: Pieces.BLACK_ROOK,
+  ['k']: Pieces.BLACK_KING,
+  ['q']: Pieces.BLACK_QUEEN,
+  ['P']: Pieces.WHITE_PAWN,
+  ['N']: Pieces.WHITE_KNIGHT,
+  ['B']: Pieces.WHITE_BISHOP,
+  ['R']: Pieces.WHITE_ROOK,
+  ['K']: Pieces.WHITE_KING,
+  ['Q']: Pieces.WHITE_QUEEN
+};
 
 const CASTLING_VALUES = ['-', 'K', 'Q', 'KQ', 'Kk', 'Kq', 'Kkq', 'Qk', 'Qq', 'Qkq', 'KQk', 'KQq', 'KQkq', 'k', 'q', 'kq'];
 
@@ -27,8 +27,7 @@ function parse(fen) {
   console.log('Parsing FEN:', fen);
 
   if (typeof fen !== 'string') {
-    console.error(`parseFEN requires 'string' input but ${typeof fen} was provided`, fen);
-    return false;
+    return { error: `parseFEN requires 'string' input but ${typeof fen} was provided` };
   }
 
   if (!fen) {
@@ -36,11 +35,12 @@ function parse(fen) {
   }
 
   console.log(`FEN validation stage 1 complete`);
+  const baseErr = 'Invalid FEN string provided';
 
   let segments = fen.split(' ').filter((s) => s.length > 0);
   if (segments.length !== 6) {
     return {
-      error: `Invalid FEN string provided - incorrect number of segments - provided ${segments.length}, expected 6`,
+      error: `${baseErr} - incorrect number of segments - provided ${segments.length}, expected 6`,
     };
   }
 
@@ -63,7 +63,7 @@ function parse(fen) {
   let ranks = piecePlacement.split('/').filter((s) => s.length > 0);
   if (ranks.length !== 8) {
     return {
-      error: `Invalid FEN string provided - incorrect number of ranks in piece placement - provided ${ranks.length}, expected 8`,
+      error: `${baseErr} - incorrect number of ranks in piece placement - provided ${ranks.length}, expected 8`
     };
   }
 
@@ -72,23 +72,38 @@ function parse(fen) {
   let invalidRankPos = ranks.findIndex((rank) => !isRankValid(rank));
   if (invalidRankPos !== -1) {
     return {
-      error: `Invalid FEN string provided - rank ${invalidRankPos} ("${ranks[invalidRankPos]}") is invalid`,
+      error: `${baseErr} - rank ${invalidRankPos} ("${ranks[invalidRankPos]}") is invalid`
     };
   }
 
   if (activeColor !== 'w' && activeColor !== 'b') {
     return {
-      error: `Invalid FEN string provided - incorrect active color - provided '${activeColor}', expected 'w' or 'b'`,
+      error: `${baseErr} - incorrect active color - provided '${activeColor}', expected 'w' or 'b'`
     };
   }
 
   if (!CASTLING_VALUES.includes(castlingAvailability)) {
     return {
-      error: `Invalid FEN string provided - incorrect castling availability - provided '${castlingAvailability}', expected one of [${CASTLING_VALUES.join(', ')}]`,
+      error: `${baseErr} - incorrect castling availability - provided '${castlingAvailability}', expected one of [${CASTLING_VALUES.join(', ')}]`
     };
   }
 
-  return { ranks, activeColor, castlingAvailability };
+  const length = enPassantTargetSquare?.length ?? 0;
+  if ((length !== 1 && length !== 2) || (length === 1 && enPassantTargetSquare !== '-')) { // THIS DOESN'T TAKE INTO ACCOUNT THE '-' VALUE
+    return {
+      error: `${baseErr} - en passant target square validation failed on stage 1 (${enPassantTargetSquare})`
+    };
+  }
+
+  const file = enPassantTargetSquare[0];
+  const rank = enPassantTargetSquare[1];
+  if (length === 2 && (!files.includes(file) || !ranks.includes(rank))) {
+    return {
+      error: `${baseErr} - en passant target square validation failed on stage 2 (${enPassantTargetSquare})`
+    };
+  }
+
+  return { ranks, activeColor, castlingAvailability, enPassantTargetSquare };
 }
 
 function isRankValid(rank) {
@@ -141,6 +156,8 @@ export const fen = {
 
     console.table(this.data);
   },
+
+  // FIXME: this function must clear board first
   renderFenData(board, fenData) {
     console.log('[renderFenData] rendering ...', fenData);
     if (!fenData) {
