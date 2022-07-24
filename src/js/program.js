@@ -48,6 +48,12 @@ addGlobalEventListener(
 
 addGlobalEventListener(
   "click",
+  ".square",
+  boardEvents.squareClicked
+);
+
+addGlobalEventListener(
+  "click",
   ".square[data-piece^=w]:not(.selected)",
   board.events.startMove
 );

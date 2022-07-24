@@ -1,6 +1,8 @@
 import { qs, qsa, createElement } from './utils/dom-utils.js';
 import { Pieces } from './pieces.js';
 import { files, ranks } from './config.js';
+import { TURN_STAGES } from './constants.js';
+
 
 export const board = {
   events: { startMove, cancelMove },
@@ -39,7 +41,9 @@ export const board = {
 
         board.append(square);
       });
-    })
+    });
+
+    this.boardData.turnStage = TURN_STAGES.ZERO;
   },
   flipBoard() {
     const board = qs('.board');
