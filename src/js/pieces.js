@@ -1,16 +1,26 @@
-const BLACK_PAWN = 'bp';
-const BLACK_KNIGHT = 'bn';
-const BLACK_BISHOP = 'bb';
-const BLACK_ROOK = 'br';
-const BLACK_KING = 'bk';
-const BLACK_QUEEN = 'bq';
+// import { board } from './board.js';
+import { WHITE, BLACK } from "./constants.js";
 
-const WHITE_PAWN = 'wp';
-const WHITE_KNIGHT = 'wn';
-const WHITE_BISHOP = 'wb';
-const WHITE_ROOK = 'wr';
-const WHITE_KING = 'wk';
-const WHITE_QUEEN = 'wq';
+const PAWN = 'p';
+const KNIGHT = 'n';
+const BISHOP = 'b';
+const ROOK = 'r';
+const KING = 'k';
+const QUEEN = 'q';
+
+const BLACK_PAWN = `${BLACK}${PAWN}`;
+const BLACK_KNIGHT = `${BLACK}${KNIGHT}`;
+const BLACK_BISHOP = `${BLACK}${BISHOP}`;
+const BLACK_ROOK = `${BLACK}${ROOK}`;
+const BLACK_KING = `${BLACK}${KING}`;
+const BLACK_QUEEN = `${BLACK}${QUEEN}`;
+
+const WHITE_PAWN = `${WHITE}${PAWN}`;
+const WHITE_KNIGHT = `${WHITE}${KNIGHT}`;
+const WHITE_BISHOP = `${WHITE}${BISHOP}`;
+const WHITE_ROOK = `${WHITE}${ROOK}`;
+const WHITE_KING = `${WHITE}${KING}`;
+const WHITE_QUEEN = `${WHITE}${QUEEN}`;
 
 const PIECES_LIST = [
   BLACK_PAWN, BLACK_KNIGHT, BLACK_BISHOP, BLACK_ROOK, BLACK_KING, BLACK_QUEEN,
