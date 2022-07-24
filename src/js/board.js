@@ -1,11 +1,10 @@
 import { qs, qsa, createElement } from './utils/dom-utils.js';
 import { Pieces } from './pieces.js';
 import { files, ranks } from './config.js';
-import { TURN_STAGES } from './constants.js';
+import { TURN_STAGES, WHITE, BLACK } from './constants.js';
 
 
 export const board = {
-  events: { startMove, cancelMove },
   boardData: { squares: {} },
 
   buildBoard() {
@@ -44,8 +43,9 @@ export const board = {
       });
     });
 
-    this.boardData.turnStage = TURN_STAGES.ZERO;
+    this.setTurnStage(TURN_STAGES.ZERO);
   },
+
   flipBoard() {
     const board = qs('.board');
     if (!board) {
@@ -64,112 +64,129 @@ export const board = {
       .forEach(square => board.append(square));
   },
 
+  setTurnStage(stage) {
+    if (stage !== TURN_STAGES.ZERO && stage !== TURN_STAGES.ONE) {
+      console.error('Invalid turn!');
+
+      return;
+    }
+
+    // TODO: at this point we could "paint" specified stage in UI
+
+    this.boardData.turnStage = stage;
+  },
+
+  computeCandidateMoves(square) {
+    // console.log('computeCandidateMoves', square);
+
+    const piece = square?.dataset?.piece;
+    if (!piece) {
+      return [];
+    }
+
+    switch (piece) {
+      case Pieces.WHITE_PAWN:
+        return this.getWhitePawnMoves(square);
+      default:
+        return [];
+    }
+  },
+
+  spotlightCanditateMoves(moves) {
+    // console.log('spotlightCanditateMoves', moves);
+
+    moves.forEach(move => {
+      // console.log('spotlightCanditateMoves', move, this.boardData.squares[move]);
+
+      this.boardData.squares[move.squareId]?.element?.classList.add(move.isCapture ? 'candidate-capture' : 'candidate');
+    });
+  },
+
+  isEmptySquare(square) {
+    return !square.dataset.piece;
+  },
+
+  getPieceColor(square) {
+    if (this.isEmptySquare(square)) {
+      return undefined;
+    }
+
+    const color = square.dataset.piece.charAt(0);
+    if (color !== WHITE && color !== BLACK) {
+      console.error('getPieceColor() found unknown color', color, square);
+    }
+
+    return color;
+  },
+
+  //#region PIECE MOVEMENT
+  getWhitePawnMoves(square) {
+    // console.log(`getWhitePawnMoves(squareId=${squareId})`);
+    const moves = [];
+
+    const file = +square.dataset.file;
+    const rank = +square.dataset.rank;
+
+    if (!file || isNaN(file) || !rank || isNaN(rank)) {
+      console.error('file/rank info missing on specified square', square);
+
+      return;
+    }
+
+    if (rank === 1) {
+      console.warn(`Shady white pawn detected on ${square.id}!`);
+      return moves;
+    }
+
+    let targetSquare;
+
+    // if square directly in front of the pawn is empty then it is a valid move
+    const firstSquareKey = `${file}${rank + 1}`;
+    // console.log('getWhitePawnMoves first square key', firstSquareKey);
+    targetSquare = this.boardData.squares[firstSquareKey]?.element;
+    // console.log('getWhitePawnMoves first square', targetSquare);
+    if (targetSquare && this.isEmptySquare(targetSquare)) {
+      moves.push({ squareId: targetSquare.id, isCapture: false });
+
+      if (rank === 2) {
+        // for their first move pawns can advance two squares
+        const secondSquareKey = `${file}${rank + 2}`;
+        targetSquare = this.boardData.squares[secondSquareKey]?.element;
+        // console.log('getWhitePawnMoves second square', targetSquare);
+        if (targetSquare && this.isEmptySquare(targetSquare)) {
+          moves.push({ squareId: targetSquare.id, isCapture: false });
+        }
+      }
+    }
+
+    const leftCaptureSquareKey = `${file - 1}${rank + 1}`;
+    targetSquare = this.boardData.squares[leftCaptureSquareKey]?.element;
+    // console.log('getWhitePawnMoves left capture square', targetSquare);
+    if (targetSquare && this.getPieceColor(targetSquare) === BLACK) {
+      moves.push({ squareId: targetSquare.id, isCapture: true });
+    }
+
+    const rightCaptureSquareKey = `${file + 1}${rank + 1}`;
+    targetSquare = this.boardData.squares[rightCaptureSquareKey]?.element;
+    // console.log('getWhitePawnMoves right capture square', targetSquare);
+    if (targetSquare && this.getPieceColor(targetSquare) === BLACK) {
+      moves.push({ squareId: targetSquare.id, isCapture: true });
+    }
+
+    return moves;
+  },
+  //#endregion
 
 };
 
 window.board = board;
 
-// idea for renaming: intializeTurnForWhite
-function startMove(event) {
-  event.stopImmediatePropagation();
+// function cancelMove(event) {
+//   event.target.classList.remove('selected');
+//   const canditates = JSON.parse(event.target.dataset.candidates);
+//   canditates.forEach(candidate => {
+//     qs(`#${candidate.squareId}`)?.classList?.remove(candidate.isCapture ? 'candidate-capture' : 'candidate')
+//   });
 
-  const candidateMoves = getCandidateMoves(event.target);
-  console.log('candidate moves', candidateMoves);
-
-  // store candidate moves so we can clear them when completing the move
-  event.target.dataset.candidates = JSON.stringify(candidateMoves);
-
-  // mark the square/piece as selected
-  event.target.classList.add('selected');
-
-  spotlightCanditateMoves(candidateMoves);
-}
-
-function getCandidateMoves(square) {
-  // const label = `getCandidateMoves(...)`;
-  // console.log(`${label} square`, square);
-
-  const squareId = square?.getAttribute('id');
-  if (!squareId) {
-    return [];
-  }
-
-  const piece = square?.dataset.piece;
-  // console.log(`${label} piece`, piece);
-
-  switch (piece) {
-    case Pieces.WHITE_PAWN:
-      return getWhitePawnMoves(squareId);
-    default:
-      return [];
-  }
-}
-
-function getWhitePawnMoves(squareId) {
-  // console.log(`getWhitePawnMoves(squareId=${squareId})`);
-  let file = squareId.charAt(0);
-  const rank = +squareId.charAt(1);
-
-  const moves = [];
-
-  if (rank === 1) {
-    console.warn(`Shady pawn detected on ${squareId}!`);
-    return moves;
-  }
-
-  let targetSquare;
-
-  // if square directly in front of the pawn is empty then it is a valid move
-  const firstSquareId = `${file}${rank + 1}`;
-  targetSquare = qs(`#${firstSquareId}`);
-  if (targetSquare && !targetSquare.dataset.piece) {
-    moves.push({ squareId: firstSquareId, isCapture: false });
-
-    if (rank === 2) {
-      // for their first move pawns can advance two squares
-      const secondSquareId = `${file}${rank + 2}`;
-      targetSquare = qs(`#${secondSquareId}`);
-      if (targetSquare && !targetSquare.dataset.piece) {
-        moves.push({ squareId: secondSquareId, isCapture: false });
-      }
-    }
-  }
-
-  const leftCaptureSquare = `${getOffsettedFile(file, -1)}${rank + 1}`;
-  targetSquare = qs(`#${leftCaptureSquare}`);
-  if (targetSquare && targetSquare.dataset.piece?.charAt(0) === 'b') {
-    moves.push({ squareId: leftCaptureSquare, isCapture: true });
-  }
-
-  const rightCaptureSquare = `${getOffsettedFile(file, +1)}${rank + 1}`;
-  targetSquare = qs(`#${rightCaptureSquare}`);
-  if (targetSquare && targetSquare.dataset.piece?.charAt(0) === 'b') {
-    moves.push({ squareId: rightCaptureSquare, isCapture: true });
-  }
-
-  return moves;
-}
-
-function getOffsettedFile(file = ' ', offset = 0) {
-  if (typeof file !== 'string' || file.length === 0) {
-    return ' ';
-  }
-
-  return String.fromCharCode(file.charCodeAt(0) + offset);
-}
-
-function spotlightCanditateMoves(moves) {
-  moves.forEach(move => {
-    qs(`#${move.squareId}`)?.classList.add(move.isCapture ? 'candidate-capture' : 'candidate');
-  });
-}
-
-function cancelMove(event) {
-  event.target.classList.remove('selected');
-  const canditates = JSON.parse(event.target.dataset.candidates);
-  canditates.forEach(candidate => {
-    qs(`#${candidate.squareId}`)?.classList?.remove(candidate.isCapture ? 'candidate-capture' : 'candidate')
-  });
-
-  delete event.target.dataset.candidates;
-}
+//   delete event.target.dataset.candidates;
+// }

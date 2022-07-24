@@ -1,20 +1,22 @@
 import { Pieces } from './pieces.js';
-import { BLACK, TURN_STAGES, WHITE } from './constants.js';
+import { TURN_STAGES } from './constants.js';
 
 export const boardEvents = {
 
   squareClicked(event) {
-    const boardData = window.board.boardData;
-    if (!boardData) {
+    const board = window.board;
+    if (!board) {
+      console.error('board object not found');
+
       return;
     }
 
-    switch (boardData.turnStage) {
+    switch (board.boardData.turnStage) {
       case TURN_STAGES.ZERO:
-        handleTurnStageZero(boardData, event.target)
+        handleTurnStageZero(board, event.target)
         break;
       case TURN_STAGES.ONE:
-        handleTurnStageOne(boardData, event.target)
+        handleTurnStageOne(board, event.target)
         break;
       default:
         break;
@@ -80,40 +82,37 @@ export const boardEvents = {
 
 }
 
-function handleTurnStageZero(boardData, square) {
-  console.log('turn stage 0', boardData, isEmptySquare(square), square);
+function handleTurnStageZero(board, square) {
+  console.log('turn stage 0', board.boardData, board.isEmptySquare(square), square);
   const bailMsg = 'bailing from handleTurnStageZero() #';
 
-  if (isEmptySquare(square)) {
+  if (board.isEmptySquare(square)) {
     console.log(bailMsg + 1);
 
     return;
   }
 
-  if (getPieceColor(square) !== boardData.activeColor) {
+  if (board.getPieceColor(square) !== board.boardData.activeColor) {
     console.log(bailMsg + 2);
 
     return;
   }
-}
 
-function handleTurnStageOne(boardData, square) {
-  console.log('turn stage 1', boardData, square);
-}
+  // mark the square/piece as selected
+  square.classList.add('selected');
 
-function isEmptySquare(square) {
-  return !square.dataset.piece;
-}
+  const candidateMoves = board.computeCandidateMoves(square);
+  if (candidateMoves.length === 0) {
+    console.log(bailMsg + 3);
 
-function getPieceColor(square) {
-  if (isEmptySquare(square)) {
-    return undefined;
+    return;
   }
 
-  const color = square.dataset.piece.charAt(0);
-  if (color !== WHITE && color !== BLACK) {
-    console.error('getPieceColor() found unknown color', color, square);
-  }
+  board.spotlightCanditateMoves(candidateMoves);
 
-  return color;
+  board.setTurnStage(TURN_STAGES.ONE);
+}
+
+function handleTurnStageOne(board, square) {
+  console.log('turn stage 1', board.boardData, square);
 }
