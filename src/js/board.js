@@ -7,6 +7,7 @@ import { TURN_STAGES } from './constants.js';
 export const board = {
   events: { startMove, cancelMove },
   boardData: { squares: {} },
+
   buildBoard() {
     const board = qs('.board');
     if (!board) {
@@ -30,14 +31,14 @@ export const board = {
           square.classList.add('black-square');
         }
 
-        square.dataset.file = i;
-        square.dataset.rank = j;
+        square.dataset.file = i + 1;
+        square.dataset.rank = rank;
 
         let squareData = {
           element: square
         }
 
-        this.boardData.squares[id] = this.boardData.squares[`${i + 1}${j + 1}`] = squareData;
+        this.boardData.squares[id] = this.boardData.squares[`${i + 1}${rank}`] = squareData;
 
         board.append(square);
       });
