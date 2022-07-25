@@ -26,7 +26,7 @@ export const boardEvents = {
   //#region Admin Events
   spawnPiece(event) {
     if (!(event.ctrlKey && !event.shiftKey && !event.altKey)) {
-      console.log('bailing from spawnPiece() #1');
+      // console.log('bailing from spawnPiece() #1');
 
       return;
     }
@@ -35,7 +35,7 @@ export const boardEvents = {
     event.stopImmediatePropagation();
 
     if (!event.target.classList.contains('square')) {
-      console.log('bailing from spawnPiece() #2');
+      // console.log('bailing from spawnPiece() #2');
 
       return;
     }
@@ -62,7 +62,7 @@ export const boardEvents = {
 
   deletePiece(event) {
     if (!(event.ctrlKey && event.shiftKey)) {
-      console.log('bailing from deletePiece() #1');
+      // console.log('bailing from deletePiece() #1');
 
       return;
     }
@@ -71,7 +71,7 @@ export const boardEvents = {
     event.stopImmediatePropagation();
 
     if (!event.target.classList.contains('square')) {
-      console.log('bailing from deletePiece() #2');
+      // console.log('bailing from deletePiece() #2');
 
       return;
     }
@@ -83,17 +83,18 @@ export const boardEvents = {
 }
 
 function handleTurnStageZero(board, square) {
-  console.log('turn stage 0', board.boardData, board.isEmptySquare(square), square);
+  // console.log('turn stage 0', board.boardData, board.isEmptySquare(square), square);
+  // eslint-disable-next-line no-unused-vars
   const bailMsg = 'bailing from handleTurnStageZero() #';
 
   if (board.isEmptySquare(square)) {
-    console.log(bailMsg + 1);
+    // console.log(bailMsg + 1);
 
     return;
   }
 
   if (board.getPieceColor(square) !== board.boardData.activeColor) {
-    console.log(bailMsg + 2);
+    // console.log(bailMsg + 2);
 
     return;
   }

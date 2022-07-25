@@ -24,7 +24,7 @@ export const PIECE_MAPPING = {
 const CASTLING_VALUES = ['-', 'K', 'Q', 'KQ', 'Kk', 'Kq', 'Kkq', 'Qk', 'Qq', 'Qkq', 'KQk', 'KQq', 'KQkq', 'k', 'q', 'kq'];
 
 function parse(fen) {
-  console.log('Parsing FEN:', fen);
+  // console.log('Parsing FEN:', fen);
 
   if (typeof fen !== 'string') {
     return { error: `parseFEN requires 'string' input but ${typeof fen} was provided` };
@@ -34,7 +34,7 @@ function parse(fen) {
     return { error: `No FEN string provided` };
   }
 
-  console.log(`FEN validation stage 1 complete`);
+  // console.log(`FEN validation stage 1 complete`);
   const baseErr = 'Invalid FEN string provided';
 
   let segments = fen.split(' ').filter((s) => s.length > 0);
@@ -44,7 +44,7 @@ function parse(fen) {
     };
   }
 
-  console.log(`FEN validation stage 2 complete`);
+  // console.log(`FEN validation stage 2 complete`);
 
   let [
     piecePlacement,
@@ -67,7 +67,7 @@ function parse(fen) {
     };
   }
 
-  console.log(`FEN validation stage 3 complete`);
+  // console.log(`FEN validation stage 3 complete`);
 
   let invalidRankPos = ranks.findIndex((rank) => !isRankValid(rank));
   if (invalidRankPos !== -1) {
@@ -119,11 +119,12 @@ function isRankValid(rank) {
   let filesChecked = 0;
   for (let i = 0; i < rank.length; i++) {
     if (!RANK_SYMBOLS.includes(rank[i])) {
-      console.log(`symbols are NOT valid`);
+      // console.log(`symbols are NOT valid`);
+
       return false;
     }
 
-    console.log(`symbols are valid`);
+    // console.log(`symbols are valid`);
 
     filesChecked += isNaN(rank[i]) ? 1 : +rank[i];
   }
@@ -159,7 +160,8 @@ export const fen = {
 
   // FIXME: this function must clear board first
   renderFenData(board, fenData) {
-    console.log('[renderFenData] rendering ...', fenData);
+    // console.log('[renderFenData] rendering ...', fenData);
+
     if (!fenData) {
       return;
     }
