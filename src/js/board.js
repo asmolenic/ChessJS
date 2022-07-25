@@ -87,6 +87,8 @@ export const board = {
     switch (piece) {
       case Pieces.WHITE_PAWN:
         return this.getWhitePawnMoves(square);
+      case Pieces.BLACK_PAWN:
+        return this.getBlackPawnMoves(square);
       default:
         return [];
     }
@@ -206,18 +208,63 @@ export const board = {
 
     return moves;
   },
+  getBlackPawnMoves(square) {
+    // console.log(`getBlackPawnMoves(squareId=${squareId})`);
+    const moves = [];
+
+    const file = +square.dataset.file;
+    const rank = +square.dataset.rank;
+
+    if (!file || isNaN(file) || !rank || isNaN(rank)) {
+      console.error('file/rank info missing on specified square', square);
+
+      return;
+    }
+
+    if (rank === 8) {
+      console.warn(`Shady black pawn detected on ${square.id}!`);
+      return moves;
+    }
+
+    let targetSquare;
+
+    // if square directly in front of the pawn is empty then it is a valid move
+    const firstSquareKey = `${file}${rank - 1}`;
+    // console.log('getBlackPawnMoves first square key', firstSquareKey);
+    targetSquare = this.boardData.squares[firstSquareKey]?.element;
+    // console.log('getBlackPawnMoves first square', targetSquare);
+    if (targetSquare && this.isEmptySquare(targetSquare)) {
+      moves.push({ squareId: targetSquare.id, isCapture: false });
+
+      if (rank === 7) {
+        // for their first move pawns can advance two squares
+        const secondSquareKey = `${file}${rank - 2}`;
+        targetSquare = this.boardData.squares[secondSquareKey]?.element;
+        // console.log('getBlackPawnMoves second square', targetSquare);
+        if (targetSquare && this.isEmptySquare(targetSquare)) {
+          moves.push({ squareId: targetSquare.id, isCapture: false });
+        }
+      }
+    }
+
+    const leftCaptureSquareKey = `${file + 1}${rank - 1}`;
+    targetSquare = this.boardData.squares[leftCaptureSquareKey]?.element;
+    // console.log('getBlackPawnMoves left capture square', targetSquare);
+    if (targetSquare && this.getPieceColor(targetSquare) === WHITE) {
+      moves.push({ squareId: targetSquare.id, isCapture: true });
+    }
+
+    const rightCaptureSquareKey = `${file - 1}${rank - 1}`;
+    targetSquare = this.boardData.squares[rightCaptureSquareKey]?.element;
+    // console.log('getBlackPawnMoves right capture square', targetSquare);
+    if (targetSquare && this.getPieceColor(targetSquare) === WHITE) {
+      moves.push({ squareId: targetSquare.id, isCapture: true });
+    }
+
+    return moves;
+  },
   //#endregion
 
 };
 
 window.board = board;
-
-// function cancelMove(event) {
-//   event.target.classList.remove('selected');
-//   const canditates = JSON.parse(event.target.dataset.candidates);
-//   canditates.forEach(candidate => {
-//     qs(`#${candidate.squareId}`)?.classList?.remove(candidate.isCapture ? 'candidate-capture' : 'candidate')
-//   });
-
-//   delete event.target.dataset.candidates;
-// }
