@@ -98,21 +98,32 @@ function handleTurnStageZero(board, square) {
     return;
   }
 
-  // mark the square/piece as selected
-  square.classList.add('selected');
-
-  const candidateMoves = board.computeCandidateMoves(square);
-  if (candidateMoves.length === 0) {
-    console.log(bailMsg + 3);
+  board.boardData.candidateMoves = board.computeCandidateMoves(square);
+  if (board.boardData.candidateMoves.length === 0) {
+    // console.log(bailMsg + 3);
 
     return;
   }
 
-  board.spotlightCanditateMoves(candidateMoves);
+  board.setSelectedSquare(square);
+
+  board.spotlightCanditateMoves();
 
   board.setTurnStage(TURN_STAGES.ONE);
 }
 
 function handleTurnStageOne(board, square) {
-  console.log('turn stage 1', board.boardData, square);
+  // console.log('turn stage 1', board.boardData, square);
+
+  if (!board.isCandidateSquare(square)) {
+    board.clearCandidateMoves();
+    board.clearSquareSelection();
+
+    board.setTurnStage(TURN_STAGES.ZERO);
+
+    return;
+  }
+
+  // proceed with finalizing the move (simple move or capture)
+  // ...
 }

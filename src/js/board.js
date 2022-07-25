@@ -5,7 +5,7 @@ import { TURN_STAGES, WHITE, BLACK } from './constants.js';
 
 
 export const board = {
-  boardData: { squares: {} },
+  boardData: { squares: {}, candidateMoves: [] },
 
   buildBoard() {
     const board = qs('.board');
@@ -92,14 +92,40 @@ export const board = {
     }
   },
 
-  spotlightCanditateMoves(moves) {
+  spotlightCanditateMoves(candidateMoves = undefined) {
     // console.log('spotlightCanditateMoves', moves);
+
+    const moves = candidateMoves || this.boardData.candidateMoves;
 
     moves.forEach(move => {
       // console.log('spotlightCanditateMoves', move, this.boardData.squares[move]);
 
       this.boardData.squares[move.squareId]?.element?.classList.add(move.isCapture ? 'candidate-capture' : 'candidate');
     });
+  },
+
+  clearCandidateMoves() {
+    let square;
+    this.boardData.candidateMoves.forEach(move => {
+      square = this.boardData.squares[move.squareId];
+      if (square)
+      {
+        square.element.classList.remove('candidate');
+        square.element.classList.remove('candidate-capture');
+      }
+    });
+
+    this.boardData.candidateMoves = [];
+  },
+
+  setSelectedSquare(square) {
+    square.classList.add('selected');
+    board.boardData.selectedSquare = square;
+  },
+
+  clearSquareSelection() {
+    this.boardData.selectedSquare?.classList.remove('selected');
+    board.boardData.selectedSquare = undefined;
   },
 
   isEmptySquare(square) {
@@ -117,6 +143,11 @@ export const board = {
     }
 
     return color;
+  },
+
+  isCandidateSquare(square) {
+    // console.log('isCandidateSquare', square, square.classList);
+    return square.classList.contains('candidate') || square.classList.contains('capture-candidate');
   },
 
   //#region PIECE MOVEMENT
