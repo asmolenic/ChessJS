@@ -89,6 +89,9 @@ export const board = {
         return this.getWhitePawnMoves(square);
       case Pieces.BLACK_PAWN:
         return this.getBlackPawnMoves(square);
+      case Pieces.WHITE_KNIGHT:
+      case Pieces.BLACK_KNIGHT:
+        return this.getKnightMoves(square);
       default:
         return [];
     }
@@ -110,8 +113,7 @@ export const board = {
     let square;
     this.boardData.candidateMoves.forEach(move => {
       square = this.boardData.squares[move.squareId];
-      if (square)
-      {
+      if (square) {
         square.element.classList.remove('candidate');
         square.element.classList.remove('candidate-capture');
       }
@@ -169,11 +171,12 @@ export const board = {
     if (!file || isNaN(file) || !rank || isNaN(rank)) {
       console.error('file/rank info missing on specified square', square);
 
-      return;
+      return moves;
     }
 
     if (rank === 1) {
       console.warn(`Shady white pawn detected on ${square.id}!`);
+
       return moves;
     }
 
@@ -214,6 +217,7 @@ export const board = {
 
     return moves;
   },
+
   getBlackPawnMoves(square) {
     // console.log(`getBlackPawnMoves(squareId=${squareId})`);
     const moves = [];
@@ -224,11 +228,12 @@ export const board = {
     if (!file || isNaN(file) || !rank || isNaN(rank)) {
       console.error('file/rank info missing on specified square', square);
 
-      return;
+      return moves;
     }
 
     if (rank === 8) {
       console.warn(`Shady black pawn detected on ${square.id}!`);
+
       return moves;
     }
 
@@ -269,6 +274,60 @@ export const board = {
 
     return moves;
   },
+
+  getKnightMoves(square) {
+    const moves = [];
+
+    const file = +square.dataset.file;
+    const rank = +square.dataset.rank;
+
+    if (!file || isNaN(file) || !rank || isNaN(rank)) {
+      console.error('file/rank info missing on specified square', square);
+
+      return moves;
+    }
+
+    const possibilities = [
+      { file: file - 2, rank: rank + 1 },
+      { file: file - 2, rank: rank - 1 },
+      { file: file - 1, rank: rank + 2 },
+      { file: file - 1, rank: rank - 2 },
+      { file: file + 1, rank: rank + 2 },
+      { file: file + 1, rank: rank - 2 },
+      { file: file + 2, rank: rank + 1 },
+      { file: file + 2, rank: rank - 1 }
+    ];
+
+    let squareKey;
+    let targetSquare;
+    let targetSquarePieceColor;
+    possibilities.forEach(p => {
+      squareKey = `${p.file}${p.rank}`;
+      targetSquare = this.boardData.squares[squareKey]?.element;
+      if (!targetSquare) {
+        return;
+      }
+
+      if (this.isEmptySquare(targetSquare)) {
+        moves.push({ squareId: targetSquare.id, isCapture: false });
+
+        return;
+      }
+
+      targetSquarePieceColor = this.getPieceColor(targetSquare);
+      if (!targetSquarePieceColor) {
+        return;
+      }
+
+      if (targetSquarePieceColor === this.boardData.activeColor) {
+        return;
+      }
+
+      moves.push({ squareId: targetSquare.id, isCapture: true });
+    });
+
+    return moves;
+  }
   //#endregion
 
 };
