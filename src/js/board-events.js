@@ -1,5 +1,6 @@
 import { Pieces } from './pieces.js';
 import { TURN_STAGES } from './constants.js';
+import { deepClone } from './utils/utils.js';
 
 export const boardEvents = {
 
@@ -114,17 +115,25 @@ function handleTurnStageZero(board, square) {
 }
 
 function handleTurnStageOne(board, square) {
-  // console.log('turn stage 1', board.boardData, square);
+  // console.log('turn stage 1 start', deepClone(board.boardData), square);
 
   if (!board.isCandidateSquare(square)) {
     board.clearCandidateMoves();
     board.clearSquareSelection();
-
     board.setTurnStage(TURN_STAGES.ZERO);
+    // console.log('bailing from turn stage 1 due to clicked square not being a candidate');
 
     return;
   }
 
-  // proceed with finalizing the move (simple move or capture)
-  // ...
+  // move the piece (can result in a capture)
+  square.dataset.piece = board.boardData.selectedSquare.dataset.piece;
+  delete board.boardData.selectedSquare.dataset.piece;
+
+  board.clearCandidateMoves();
+  board.clearSquareSelection();
+  board.setTurnStage(TURN_STAGES.ZERO);
+  board.togglePlayerTurn();
+
+  // console.log('turn stage 1 end', deepClone(board.boardData), square);
 }

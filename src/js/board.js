@@ -135,6 +135,8 @@ export const board = {
   },
 
   getPieceColor(square) {
+    // console.log('getPieceColor', square);
+
     if (this.isEmptySquare(square)) {
       return undefined;
     }
@@ -149,7 +151,11 @@ export const board = {
 
   isCandidateSquare(square) {
     // console.log('isCandidateSquare', square, square.classList);
-    return square.classList.contains('candidate') || square.classList.contains('capture-candidate');
+    return square.classList.contains('candidate') || square.classList.contains('candidate-capture');
+  },
+
+  togglePlayerTurn() {
+    this.boardData.activeColor = this.boardData.activeColor === WHITE ? BLACK : WHITE;
   },
 
   //#region PIECE MOVEMENT
