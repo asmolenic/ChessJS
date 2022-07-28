@@ -353,36 +353,42 @@ export const board = {
       { file: 1, rank: -1 },
     ];
 
+    directions.forEach(d => moves.push(...this.getLaserMoves({ file, rank }, d)));
+
+    console.log('getBishopMoves returning', moves);
+    return moves;
+  },
+
+  getLaserMoves(source, direction) {
+    const moves = [];
     let multiplier;
     let squareKey;
     let targetSquare;
     let targetSquarePieceColor;
-    directions.forEach(d => {
-      // console.log(`current direction`, d);
-      multiplier = 1;
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        squareKey = `${file + d.file * multiplier}${rank + d.rank * multiplier}`;
-        // console.log('squareKey', squareKey);
-        targetSquare = this.boardData.squares[squareKey]?.element;
-        if (!targetSquare) {
-          break;
-        }
-
-        if (!this.isEmptySquare(targetSquare)) {
-          targetSquarePieceColor = this.getPieceColor(targetSquare);
-          if (targetSquarePieceColor !== this.boardData.activeColor) {
-            moves.push({ squareId: targetSquare.id, isCapture: true });
-          }
-
-          break;
-        }
-
-        moves.push({ squareId: targetSquare.id, isCapture: false });
-        multiplier++;
+    multiplier = 1;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      squareKey = `${source.file + direction.file * multiplier}${source.rank + direction.rank * multiplier}`;
+      console.log('squareKey', squareKey);
+      targetSquare = this.boardData.squares[squareKey]?.element;
+      if (!targetSquare) {
+        break;
       }
-    });
 
+      if (!this.isEmptySquare(targetSquare)) {
+        targetSquarePieceColor = this.getPieceColor(targetSquare);
+        if (targetSquarePieceColor !== this.boardData.activeColor) {
+          moves.push({ squareId: targetSquare.id, isCapture: true });
+        }
+
+        break;
+      }
+
+      moves.push({ squareId: targetSquare.id, isCapture: false });
+      multiplier++;
+    }
+
+    console.log('getLaserMoves returning', moves);
     return moves;
   }
   //#endregion
