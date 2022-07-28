@@ -95,6 +95,9 @@ export const board = {
       case Pieces.WHITE_BISHOP:
       case Pieces.BLACK_BISHOP:
         return this.getBishopMoves(square);
+      case Pieces.WHITE_ROOK:
+      case Pieces.BLACK_ROOK:
+        return this.getRookMoves(square);
       default:
         return [];
     }
@@ -356,6 +359,32 @@ export const board = {
     directions.forEach(d => moves.push(...this.getLaserMoves({ file, rank }, d)));
 
     console.log('getBishopMoves returning', moves);
+    return moves;
+  },
+
+  getRookMoves(square) {
+    // console.log('getRookMoves', square);
+    const moves = [];
+
+    const file = +square.dataset.file;
+    const rank = +square.dataset.rank;
+
+    if (!file || isNaN(file) || !rank || isNaN(rank)) {
+      console.error('file/rank info missing on specified square', square);
+
+      return moves;
+    }
+
+    const directions = [
+      { file: 0, rank: 1 },
+      { file: 1, rank: 0 },
+      { file: 0, rank: -1 },
+      { file: -1, rank: 0 },
+    ];
+
+    directions.forEach(d => moves.push(...this.getLaserMoves({ file, rank }, d)));
+
+    console.log('getRookMoves returning', moves);
     return moves;
   },
 
