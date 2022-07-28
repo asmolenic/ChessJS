@@ -98,6 +98,9 @@ export const board = {
       case Pieces.WHITE_ROOK:
       case Pieces.BLACK_ROOK:
         return this.getRookMoves(square);
+      case Pieces.WHITE_QUEEN:
+      case Pieces.BLACK_QUEEN:
+        return [...this.getBishopMoves(square), ...this.getRookMoves(square)];
       default:
         return [];
     }
