@@ -92,6 +92,9 @@ export const board = {
       case Pieces.WHITE_KNIGHT:
       case Pieces.BLACK_KNIGHT:
         return this.getKnightMoves(square);
+      case Pieces.WHITE_BISHOP:
+      case Pieces.BLACK_BISHOP:
+        return this.getBishopMoves(square);
       default:
         return [];
     }
@@ -162,7 +165,7 @@ export const board = {
 
   //#region PIECE MOVEMENT
   getWhitePawnMoves(square) {
-    // console.log(`getWhitePawnMoves(squareId=${squareId})`);
+    // console.log(`getWhitePawnMoves`, square);
     const moves = [];
 
     const file = +square.dataset.file;
@@ -219,7 +222,7 @@ export const board = {
   },
 
   getBlackPawnMoves(square) {
-    // console.log(`getBlackPawnMoves(squareId=${squareId})`);
+    // console.log(`getBlackPawnMoves`, square);
     const moves = [];
 
     const file = +square.dataset.file;
@@ -276,6 +279,7 @@ export const board = {
   },
 
   getKnightMoves(square) {
+    // console.log(`getKnightMoves`, square);
     const moves = [];
 
     const file = +square.dataset.file;
@@ -324,6 +328,54 @@ export const board = {
       }
 
       moves.push({ squareId: targetSquare.id, isCapture: true });
+    });
+
+    return moves;
+  },
+
+  getBishopMoves(square) {
+    // console.log('getBishopMoves', square);
+    const moves = [];
+
+    const file = +square.dataset.file;
+    const rank = +square.dataset.rank;
+
+    if (!file || isNaN(file) || !rank || isNaN(rank)) {
+      console.error('file/rank info missing on specified square', square);
+
+      return moves;
+    }
+
+    const directions = [
+      { file: -1, rank: 1 },
+      { file: -1, rank: -1 },
+      { file: 1, rank: 1 },
+      { file: 1, rank: -1 },
+    ];
+
+    let multiplier;
+    let squareKey;
+    let targetSquare;
+    let targetSquarePieceColor;
+    directions.forEach(d => {
+      // console.log(`current direction`, d);
+      multiplier = 1;
+      do {
+        squareKey = `${file + d.file * multiplier}${rank + d.rank * multiplier}`;
+        // console.log('squareKey', squareKey);
+        targetSquare = this.boardData.squares[squareKey]?.element;
+        if (targetSquare) {
+          if (this.isEmptySquare(targetSquare)) {
+            moves.push({ squareId: targetSquare.id, isCapture: false });
+          } else {
+            targetSquarePieceColor = this.getPieceColor(targetSquare);
+            if (targetSquarePieceColor !== this.boardData.activeColor) {
+              moves.push({ squareId: targetSquare.id, isCapture: true });
+            }
+          }
+        }
+        multiplier++;
+      } while (targetSquare && this.isEmptySquare(targetSquare));
     });
 
     return moves;
