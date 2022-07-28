@@ -360,22 +360,27 @@ export const board = {
     directions.forEach(d => {
       // console.log(`current direction`, d);
       multiplier = 1;
-      do {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
         squareKey = `${file + d.file * multiplier}${rank + d.rank * multiplier}`;
         // console.log('squareKey', squareKey);
         targetSquare = this.boardData.squares[squareKey]?.element;
-        if (targetSquare) {
-          if (this.isEmptySquare(targetSquare)) {
-            moves.push({ squareId: targetSquare.id, isCapture: false });
-          } else {
-            targetSquarePieceColor = this.getPieceColor(targetSquare);
-            if (targetSquarePieceColor !== this.boardData.activeColor) {
-              moves.push({ squareId: targetSquare.id, isCapture: true });
-            }
-          }
+        if (!targetSquare) {
+          break;
         }
+
+        if (!this.isEmptySquare(targetSquare)) {
+          targetSquarePieceColor = this.getPieceColor(targetSquare);
+          if (targetSquarePieceColor !== this.boardData.activeColor) {
+            moves.push({ squareId: targetSquare.id, isCapture: true });
+          }
+
+          break;
+        }
+
+        moves.push({ squareId: targetSquare.id, isCapture: false });
         multiplier++;
-      } while (targetSquare && this.isEmptySquare(targetSquare));
+      }
     });
 
     return moves;
