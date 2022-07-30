@@ -422,7 +422,43 @@ export const board = {
 
     console.log('getLaserMoves returning', moves);
     return moves;
-  }
+  },
+
+  getFixedMoves(possibilities) {
+    // console.log(`getFixedMoves`, possibilities);
+    const moves = [];
+
+    let squareKey;
+    let targetSquare;
+    let targetSquarePieceColor;
+    possibilities.forEach(p => {
+      squareKey = `${p.file}${p.rank}`;
+      targetSquare = this.boardData.squares[squareKey]?.element;
+      if (!targetSquare) {
+        return;
+      }
+
+      if (this.isEmptySquare(targetSquare)) {
+        moves.push({ squareId: targetSquare.id, isCapture: false });
+
+        return;
+      }
+
+      targetSquarePieceColor = this.getPieceColor(targetSquare);
+      if (!targetSquarePieceColor) {
+        return;
+      }
+
+      if (targetSquarePieceColor === this.boardData.activeColor) {
+        return;
+      }
+
+      moves.push({ squareId: targetSquare.id, isCapture: true });
+    });
+
+    return moves;
+  },
+
   //#endregion
 
 };
