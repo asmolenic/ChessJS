@@ -101,6 +101,9 @@ export const board = {
       case Pieces.WHITE_QUEEN:
       case Pieces.BLACK_QUEEN:
         return [...this.getBishopMoves(square), ...this.getRookMoves(square)];
+      case Pieces.WHITE_KING:
+      case Pieces.BLACK_KING:
+        return this.getKingMoves(square);
       default:
         return [];
     }
@@ -459,8 +462,36 @@ export const board = {
     return moves;
   },
 
+  getKingMoves(square) {
+    // console.log('getKingMoves', square);
+
+    const file = +square.dataset.file;
+    const rank = +square.dataset.rank;
+
+    if (!file || isNaN(file) || !rank || isNaN(rank)) {
+      console.error('file/rank info missing on specified square', square);
+
+      return [];
+    }
+
+    const possibilities = [
+      { file: file - 1, rank: rank + 1 },
+      { file: file, rank: rank + 1 },
+      { file: file + 1, rank: rank + 1 },
+      { file: file + 1, rank: rank },
+      { file: file + 1, rank: rank - 1 },
+      { file: file, rank: rank - 1 },
+      { file: file - 1, rank: rank - 1 },
+      { file: file - 1, rank: rank },
+    ];
+
+    const moves = this.getFixedMoves(possibilities);
+    // console.log('getKingMoves returning', moves);
+    return moves;
+  }
   //#endregion
 
 };
 
 window.board = board;
+
