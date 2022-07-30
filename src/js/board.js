@@ -289,15 +289,13 @@ export const board = {
 
   getKnightMoves(square) {
     // console.log(`getKnightMoves`, square);
-    const moves = [];
-
     const file = +square.dataset.file;
     const rank = +square.dataset.rank;
 
     if (!file || isNaN(file) || !rank || isNaN(rank)) {
       console.error('file/rank info missing on specified square', square);
 
-      return moves;
+      return [];
     }
 
     const possibilities = [
@@ -311,34 +309,8 @@ export const board = {
       { file: file + 2, rank: rank - 1 }
     ];
 
-    let squareKey;
-    let targetSquare;
-    let targetSquarePieceColor;
-    possibilities.forEach(p => {
-      squareKey = `${p.file}${p.rank}`;
-      targetSquare = this.boardData.squares[squareKey]?.element;
-      if (!targetSquare) {
-        return;
-      }
-
-      if (this.isEmptySquare(targetSquare)) {
-        moves.push({ squareId: targetSquare.id, isCapture: false });
-
-        return;
-      }
-
-      targetSquarePieceColor = this.getPieceColor(targetSquare);
-      if (!targetSquarePieceColor) {
-        return;
-      }
-
-      if (targetSquarePieceColor === this.boardData.activeColor) {
-        return;
-      }
-
-      moves.push({ squareId: targetSquare.id, isCapture: true });
-    });
-
+    const moves = this.getFixedMoves(possibilities);
+    console.log('getKnightMoves returning', moves);
     return moves;
   },
 
